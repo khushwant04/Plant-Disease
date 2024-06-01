@@ -15,11 +15,11 @@ You can find the Docker image containing the complete working environment and ap
 - Supports a wide range of plant diseases for accurate detection.
 
 ## Project Structure
-- `model/`: Directory containing trained models.
-- `src/`: Directory containing the source code.
-  - `Models/`: Model dir
+- `model`: Directory containing trained models.
+- `src`: Directory containing the source code.
+  - `Models`: Model dir
     - `resnet.py`: Implementation of ResNET from scratch.
-  - `datasets/`: Directory for deep learning model scripts.
+  - `datasets`: Directory for deep learning model scripts.
     - `plant_disease.py`: script for creating custom dataset.
   - `helper.py`: script which contains helperfunctions.
   - `train.py`: script for training loop and class.
