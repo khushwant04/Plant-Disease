@@ -43,6 +43,8 @@ You can find the Docker image containing the complete working environment and ap
    streamlit run streamlit_app.py
    
 ## Testing images:
+   [Download Testing Images](https://1drv.ms/f/s!Akr767JWN3vEllsH0PqUESUpbakN?e=rETLSX).
    ```bash
    https://1drv.ms/f/s!Akr767JWN3vEllsH0PqUESUpbakN?e=rETLSX
+
 
