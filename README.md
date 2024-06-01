@@ -33,7 +33,7 @@ You can find the Docker image containing the complete working environment and ap
 ## Installation
 1. Clone this repository:
    ```bash
-   git clone https://github.com/khushwant04/plant-disease-detection.git
+   git clone https://github.com/khushwant04/Plant-Disease.git
 
 2. Install dependencies:
    ```bash
