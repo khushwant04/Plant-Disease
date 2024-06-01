@@ -14,6 +14,22 @@ You can find the Docker image containing the complete working environment and ap
 - Offers a Streamlit web application for offline analysis and visualization.
 - Supports a wide range of plant diseases for accurate detection.
 
+## Project Structure
+- `model/`: Directory containing trained models.
+- `src/`: Directory containing the source code.
+  - `Models/`: Model dir
+    - `resnet.py`: Implementation of ResNET from scratch.
+  - `datasets/`: Directory for deep learning model scripts.
+    - `plant_disease.py`: script for creating custom dataset.
+  - `helper.py`: script which contains helperfunctions.
+  - `train.py`: script for training loop and class.
+- `.gitignore`: File specifying ignored files and directories for version control.
+- `README.md`: This README file.
+- `dockerfile`: Dockerfile for building Docker image.
+- `main.ipynb`: Jupyter notebook containing main code or experiments.
+- `main.py`: Main Python script for running the application.
+- `requirements.txt`: File specifying project dependencies.
+
 ## Installation
 1. Clone this repository:
    ```bash
