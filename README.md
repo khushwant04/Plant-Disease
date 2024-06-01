@@ -40,7 +40,7 @@ You can find the Docker image containing the complete working environment and ap
    pip install -r requirements.txt
 3. Run the Streamlit app:
    ```bash
-   streamlit run streamlit_app.py
+   streamlit run main.py
    
 ## Testing images:
    [Download Testing Images](https://1drv.ms/f/s!Akr767JWN3vEllsH0PqUESUpbakN?e=rETLSX).
