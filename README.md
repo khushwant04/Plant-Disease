@@ -19,8 +19,13 @@ You can find the Docker image containing the complete working environment and ap
    ```bash
    git clone https://github.com/khushwant04/plant-disease-detection.git
 
-2. pip install -r requirements.txt
-3. streamlit run main.py
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+3. Run the Streamlit app:
+   ```bash
+   streamlit run streamlit_app.py
+
 
 Acknowledgments
 Dataset provided by Hugging Face.
