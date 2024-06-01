@@ -25,7 +25,6 @@ You can find the Docker image containing the complete working environment and ap
 3. Run the Streamlit app:
    ```bash
    streamlit run streamlit_app.py
-
-
+   
 Acknowledgments
 Dataset provided by Hugging Face.
