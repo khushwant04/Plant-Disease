@@ -1,7 +1,7 @@
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from src.helper import accuracy_fn
-
+from tqdm import tqdm
 
 class Train(object):
     def __init__(
@@ -11,7 +11,6 @@ class Train(object):
         test_loader: torch.utils.data.DataLoader,
         loss_fn: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
-        accuracy_fn,
         device: torch.device,
     ):
         self.model = model
@@ -19,7 +18,6 @@ class Train(object):
         self.test_loader = test_loader
         self.loss_fn = loss_fn
         self.optimizer = optimizer
-        self.accuracy_fn = accuracy_fn
         self.device = device
         self.writer = SummaryWriter()  # Initialize TensorBoard writer
 
@@ -35,8 +33,7 @@ class Train(object):
             # Calculate loss
             loss = self.loss_fn(y_pred, y)
             train_loss += loss.item()
-            train_acc += self.accuracy_fn(y_true=y, y_pred=y_pred.argmax(dim=1))
-
+            train_acc += accuracy_fn(y_true=y, y_pred=y_pred.argmax(dim=1))
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
@@ -61,7 +58,7 @@ class Train(object):
                 test_pred = self.model(X)
 
                 test_loss += self.loss_fn(test_pred, y).item()
-                test_acc += self.accuracy_fn(y_true=y, y_pred=test_pred.argmax(dim=1))
+                test_acc += accuracy_fn(y_true=y, y_pred=test_pred.argmax(dim=1))
 
             test_loss /= len(self.test_loader)
             test_acc /= len(self.test_loader)
