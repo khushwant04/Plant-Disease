@@ -1,13 +1,28 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import torch
 import io
 import logging
 from src.datasets.plant_disease import get_image_transforms, PlantDataset
 from src.Models.resnet import ResNet50
+from typing import List
 
 app = FastAPI()
+
+# Configure CORS
+origins = [
+    "http://localhost:5500",  # Your frontend origin (adjust as needed)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO,
@@ -56,7 +71,7 @@ def preprocess_image(image):
     return image
 
 @app.post("/predict/")
-async def predict_images(files: list[UploadFile] = File(...)):
+async def predict_images(files: List[UploadFile] = File(...)):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     predictions = []
     
@@ -71,20 +86,37 @@ async def predict_images(files: list[UploadFile] = File(...)):
             # Make a prediction
             with torch.no_grad():  # No gradient computation needed for inference
                 output = model(image_tensor)  # Forward pass through the model
-            _, predicted = torch.max(output, 1)  # Get the class index with the highest score
-            class_index = predicted.item()  # Convert the tensor to a Python integer
-            class_name = idx_to_class[class_index]  # Get the class name from the index
+            
+            # Get prediction scores
+            scores = torch.softmax(output, dim=1)  # Apply softmax to get probabilities
+            max_score, predicted = torch.max(scores, 1)  # Get the max score and class index
+            
+            # Check the threshold
+            threshold = 0.7  # Example threshold; adjust as needed
+            if max_score.item() > threshold:
+                class_index = predicted.item()  # Convert the tensor to a Python integer
+                class_name = idx_to_class[class_index]  # Get the class name from the index
+                result = {
+                    'class_index': class_index,
+                    'class_name': class_name
+                }
+            else:
+                result = {
+                    'class_index': None,
+                    'class_name': "Healthy image"
+                }
             
             # Append result to predictions list
-            predictions.append({
-                'class_index': class_index,
-                'class_name': class_name
-            })
+            predictions.append(result)
             
-            logger.info(f"Processed file: {file.filename}, predicted class: {class_name}")
+            logger.info(f"Processed file: {file.filename}, result: {result['class_name']}")
         
         except Exception as e:
             logger.error(f"Error processing file {file.filename}: {e}")
+            predictions.append({
+                'class_index': None,
+                'class_name': f"Error processing file {file.filename}: {e}"
+            })
     
     logger.info("Prediction completed.")
     
