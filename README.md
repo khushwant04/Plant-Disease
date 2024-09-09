@@ -1,4 +1,4 @@
-# Plant Disease Classification using PyTorch, Flask, and Streamlit
+# Plant Disease Classification using PyTorch, FastAPI
 
 This project aims to detect plant diseases using deep learning techniques implemented with PyTorch. It provides both a web application built with Flask for real-time detection and a user-friendly interface powered by Streamlit for offline analysis.
 
