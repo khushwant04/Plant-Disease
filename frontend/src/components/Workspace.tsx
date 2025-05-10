@@ -10,7 +10,7 @@ const Workspace = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             {/* Main Compose Panel */}
-            <div className="flex-1 m-3">
+            <div className="flex-1">
                 <div className="bg-white rounded-lg h-full p-4 shadow-md">
                     {children}
                 </div>

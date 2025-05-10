@@ -1,7 +1,7 @@
 # app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.router import prediction, generation
+from app.router import analyse, pdf_report, prediction, generation
 from app.models.model_loader import model_manager
 from app.logging_config import logger
 from app.config import ORIGINS
@@ -23,6 +23,8 @@ app.add_middleware(
 # Include routers
 app.include_router(prediction.router, tags=["prediction"])
 app.include_router(generation.router, tags=["generation"])
+app.include_router(analyse.router, tags=["Analysis"])
+app.include_router(pdf_report.router, tags=["Analysis"])
 
 @app.on_event("startup")
 async def startup_event():
