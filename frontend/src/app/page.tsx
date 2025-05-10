@@ -2,11 +2,12 @@
 "use client"
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { PredictionChart } from '@/components/PredictionChart'; // Adjust path if necessary
+// REMOVED: import { PredictionChart } from '@/components/PredictionChart';
 import { Button } from "@/components/ui/button"; // Assuming shadcn/ui button
 import { Input } from "@/components/ui/input";   // Assuming shadcn/ui input
 import { Label } from "@/components/ui/label";   // Assuming shadcn/ui label
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Assuming shadcn/ui card
+// Keep Card, CardContent, CardHeader, CardTitle, CardDescription for the table card
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Assuming shadcn/ui alert
 import { Terminal, Loader2 } from "lucide-react"; // Icons
 import {
@@ -35,20 +36,12 @@ interface ApiResponse {
   predictions: PredictionResult[];
 }
 
-// Simple color palette function (same as before)
-const COLORS = [
-  '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28DFF',
-  '#FF6F61', '#6B5B95', '#88B04B', '#F7CAC9', '#92A8CD',
-  '#F45B69', '#80A4ED', '#D0EEB9', '#FFDAB9', '#E9E9EB'
-];
-
-const getColorForIndex = (index: number) => COLORS[index % COLORS.length];
+// Removed COLORS and getColorForIndex as they were only for the chart
 
 
 const PredictionPage = () => {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
-  // chartData stores aggregated summed confidences for each class
-  const [chartData, setChartData] = useState<{ name: string; value: number; fill: string }[]>([]);
+  // REMOVED: const [chartData, setChartData] = useState<{ name: string; value: number; fill: string }[]>([]);
   const [predictionResults, setPredictionResults] = useState<PredictionResult[]>([]); // Store raw results
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +49,7 @@ const PredictionPage = () => {
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setSelectedFiles(event.target.files);
-      setChartData([]); // Clear previous results
+      // REMOVED: setChartData([]); // Clear previous results
       setPredictionResults([]);
       setError(null);
     }
@@ -70,7 +63,7 @@ const PredictionPage = () => {
 
     setLoading(true);
     setError(null);
-    setChartData([]);
+    // REMOVED: setChartData([]);
     setPredictionResults([]);
 
     const formData = new FormData();
@@ -97,59 +90,13 @@ const PredictionPage = () => {
       const result: ApiResponse = await response.json();
       setPredictionResults(result.predictions); // Store raw results
 
+      // REMOVED: Chart data processing logic
       // --- Data Processing for Chart (Sum of ALL Confidences for EACH Class across all images) ---
-      const aggregatedConfidences: { [key: string]: number } = {};
-      // Use a Map to maintain insertion order for consistent color assignment
-      const classNamesOrder = new Map<string, number>(); // Map<className, index>
+      // const aggregatedConfidences: { [key: string]: number } = {};
+      // const classNamesOrder = new Map<string, number>();
+      // ... (rest of chart data processing)
+      // setChartData(processedChartData);
 
-
-      result.predictions.forEach(prediction => {
-        // Process results that have predictions
-        if (prediction.top_predictions && prediction.top_predictions.length > 0) {
-          // Iterate through *all* top predictions for this image
-          prediction.top_predictions.forEach(topPred => {
-            const className = topPred.class_name;
-            const confidence = topPred.confidence;
-
-            // Skip error entries for confidence aggregation
-            if (className && className.startsWith("Error processing file")) {
-              return;
-            }
-
-            // Aggregate confidence for this class
-            if (!aggregatedConfidences[className]) {
-              aggregatedConfidences[className] = 0;
-              if (!classNamesOrder.has(className)) {
-                classNamesOrder.set(className, classNamesOrder.size); // Add new class to order map
-              }
-            }
-            aggregatedConfidences[className] += confidence; // Sum the confidence
-
-
-          }); // End inner loop over top_predictions
-        }
-      }); // End outer loop over predictions
-
-      // Convert aggregatedConfidences into the chart data format
-      const processedChartData: { name: string; value: number; fill: string }[] = [];
-
-      // Iterate through the classes in the order they were first encountered
-      Array.from(classNamesOrder.keys()).forEach((className) => {
-        // Only add classes that actually received some confidence value > 0
-        if (aggregatedConfidences[className] > 0) {
-          processedChartData.push({
-            name: className,
-            value: aggregatedConfidences[className],
-            fill: getColorForIndex(classNamesOrder.get(className)!) // Assign color based on its index in the discovery order
-          });
-        }
-      });
-
-      // Optional: Sort the chart data (e.g., by value descending) for consistent appearance
-      processedChartData.sort((a, b) => b.value - a.value); // Sort by summed confidence descending
-
-
-      setChartData(processedChartData);
 
     } catch (err) {
       console.error("Upload failed:", err);
@@ -163,11 +110,6 @@ const PredictionPage = () => {
       setLoading(false);
     }
   }, [selectedFiles]);
-
-  // Total images processed count for the table and chart context
-  const totalImagesProcessed = useMemo(() => {
-    return predictionResults.length;
-  }, [predictionResults]);
 
 
   return (
@@ -223,40 +165,46 @@ const PredictionPage = () => {
         </div>
       )}
 
-      {/* Render the chart if data is available and not loading */}
-      {/* Also ensure there are results to display before showing the chart card */}
-      
+      {/* REMOVED: Chart rendering section */}
+      {/*
+            {!loading && predictionResults.length > 0 && (
+                 <div className="w-full max-w-md mx-auto">
+                    <PredictionChart data={chartData} totalImageCount={totalImagesProcessed} />
+                 </div>
+            )}
+            */}
 
-      {/* Show a message if no valid predictions for chart after loading */}
-      {!loading && predictionResults.length > 0 && chartData.length === 0 && !error && (
-        <div className="flex justify-center items-center h-32">
-          <p className="text-muted-foreground">No valid predictions with confidence > 0 received to display on the chart.</p>
-        </div>
-      )}
+      {/* REMOVED: Message if chart data is zero */}
+      {/*
+            {!loading && predictionResults.length > 0 && chartData.length === 0 && !error && (
+                  <div className="flex justify-center items-center h-32">
+                      <p className="text-muted-foreground">No valid predictions with confidence > 0 received to display on the chart.</p>
+                  </div>
+             )}
+             */}
 
 
       {/* Display individual prediction results in a table */}
+      {/* Show table if not loading AND there are prediction results */}
       {!loading && predictionResults.length > 0 && (
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Individual Image Results (Top 10 Predictions)</CardTitle>
-            {/* Using CardDescription - requires import */}
-            <CardDescription>Top 10 predictions for each uploaded image.</CardDescription>
+            <CardTitle>Prediction Results</CardTitle> {/* Simplified title */}
+            <CardDescription>Top predictions for each uploaded image.</CardDescription> {/* Simplified description */}
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Filename</TableHead>
-                  <TableHead>Prediction</TableHead> {/* Changed to "Prediction" */}
-                  <TableHead className="text-right">Confidence</TableHead>
+                  <TableHead>Prediction</TableHead>
+                  <TableHead className="text-right">Confidence</TableHead> {/* Keep right align for numbers */}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {predictionResults.map((result) => {
-                  // Display all top_predictions for each file in the table
+                  // Handle cases where top_predictions array is missing or empty
                   if (!result.top_predictions || result.top_predictions.length === 0) {
-                    // Handle cases where top_predictions array is missing or empty
                     const isError = result.top_predictions && result.top_predictions.length > 0 && result.top_predictions[0].class_name.startsWith("Error processing file");
                     return (
                       <TableRow key={result.filename} className={isError ? "bg-red-50/50" : ""}>
@@ -272,6 +220,8 @@ const PredictionPage = () => {
                     <>
                       {result.top_predictions.map((prediction, predIndex) => {
                         const isErrorEntry = prediction.class_name && prediction.class_name.startsWith("Error processing file");
+                        const confidencePercent = (prediction.confidence * 100).toFixed(2) + '%'; // Format as percentage
+
                         return (
                           <TableRow key={`${result.filename}-${predIndex}`} className={isErrorEntry ? "bg-red-50/50" : ""}>
                             {/* Only show filename on the first row for each image */}
@@ -284,7 +234,7 @@ const PredictionPage = () => {
                               {isErrorEntry ? `Error: ${prediction.class_name.replace("Error processing file: ", "")}` : prediction.class_name}
                             </TableCell>
                             <TableCell className="text-right">
-                              {isErrorEntry ? 'N/A' : prediction.confidence.toFixed(4)}
+                              {isErrorEntry ? 'N/A' : confidencePercent} {/* Display formatted percentage */}
                             </TableCell>
                           </TableRow>
                         );
@@ -298,10 +248,10 @@ const PredictionPage = () => {
         </Card>
       )}
 
-      {/* Message when no files selected yet */}
-      {!loading && predictionResults.length === 0 && (!selectedFiles || selectedFiles.length === 0) && !error && (
+      {/* Message when no files selected yet or no results */}
+      {!loading && predictionResults.length === 0 && !error && (
         <div className="flex justify-center items-center h-32">
-          <p className="text-muted-foreground">Select images and click "Predict Diseases" to see results.</p>
+          <p className="text-muted-foreground">Select images and click &quot;Predict Diseases&quot; to see results.</p>
         </div>
       )}
     </div>
