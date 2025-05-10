@@ -111,6 +111,11 @@ const PredictionPage = () => {
     }
   }, [selectedFiles]);
 
+  // totalImagesProcessed is still useful for context, though not explicitly shown on the chart anymore
+  const totalImagesProcessed = useMemo(() => {
+    return predictionResults.length;
+  }, [predictionResults]);
+
 
   return (
     <div className="container mx-auto p-4">
@@ -134,7 +139,7 @@ const PredictionPage = () => {
           <Button
             onClick={handleSubmit}
             disabled={!selectedFiles || selectedFiles.length === 0 || loading}
-            className="mt-4"
+            className="mt-4 bg-green-700"
           >
             {loading ? (
               <>

@@ -521,7 +521,7 @@ const SideChatBot: React.FC = () => {
 
 
     return (
-        <div className="w-[400px] h-screen text-gray-900 bg-white flex flex-col shadow-lg">
+        <div className="w-[400px] h-screen text-gray-900 bg-white flex flex-col">
             <div className="p-4 text-lg font-semibold border-b flex justify-between items-center bg-green-700 text-white">
                 <span>🌿 PlantAI Assistant</span>
                 {/* Language Selector */}
