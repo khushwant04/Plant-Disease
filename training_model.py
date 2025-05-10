@@ -98,3 +98,5 @@ def train_model(resume=False, checkpoint_path=None):
 if __name__ == "__main__":
     # Set resume=True and provide checkpoint path to resume training
     train_model(resume=False, checkpoint_path="checkpoints/checkpoint-epoch-10.pth")
+
+
