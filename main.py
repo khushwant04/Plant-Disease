@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
@@ -8,38 +8,36 @@ import logging
 from src.datasets.plant_disease import get_image_transforms, PlantDataset
 from src.Models.resnet import ResNet50
 from typing import List
-
+from google import genai
+from google.genai import types
+from fastapi.responses import StreamingResponse
 app = FastAPI()
 
 # Configure CORS
 origins = [
-    "http://localhost:5500",  # Your frontend origin (adjust as needed)
+    "*", 
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],  
+    allow_headers=["*"], 
 )
 
-# Configure logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Load the model
 def load_model():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     logger.info(f"Loading model on device: {device}")
     
-    # Initialize the model
     dataset = PlantDataset(root="Plantdisease/train")
-    num_classes = len(dataset.class_to_idx)  # Determine the number of classes
+    num_classes = len(dataset.class_to_idx) 
     model = ResNet50(num_classes=num_classes).to(device)
     
-    # Attempt to load the checkpoint
     try:
         checkpoint = torch.load('model/final_model.pth', map_location=device)
         if 'model_state_dict' in checkpoint:
@@ -69,6 +67,59 @@ idx_to_class = {idx: class_name for class_name, idx in class_to_idx.items()}
 def preprocess_image(image):
     image = transform(image).unsqueeze(0)  # Apply transformations and add batch dimension
     return image
+
+
+@app.get("/")
+async def index():
+    return {"message": "Welcome to the Plant Disease Prediction API!"}
+
+
+@app.post("/generate-stream")
+async def generate_stream(request: Request):
+    body = await request.json()
+    user_input = body.get("input", "")
+
+    def stream_response():
+        client = genai.Client(
+            vertexai=True,
+            project="hexel-studio-admin",
+            location="us-central1",
+        )
+
+        model = "gemini-2.5-pro-preview-05-06"
+        contents = [
+            types.Content(
+                role="user",
+                parts=[types.Part(text=user_input)]
+            )
+        ]
+        generate_content_config = types.GenerateContentConfig(
+            temperature=1,
+            top_p=0.95,
+            max_output_tokens=8192,
+            response_modalities=["TEXT"],
+            safety_settings=[
+                types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="OFF"),
+                types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="OFF"),
+                types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="OFF"),
+                types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="OFF"),
+            ],
+        )
+
+        try:
+            for chunk in client.models.generate_content_stream(
+                model=model,
+                contents=contents,
+                config=generate_content_config,
+            ):
+                if chunk.text:
+                    yield chunk.text
+        except Exception as e:
+            yield f"\n[ERROR] {str(e)}"
+
+    return StreamingResponse(stream_response(), media_type="text/plain")
+
+
 
 @app.post("/predict/")
 async def predict_images(files: List[UploadFile] = File(...)):
