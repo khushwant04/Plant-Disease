@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Download, Upload, ChevronDown } from "lucide-react";
+import { Loader2, Download, Upload, Mic } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -601,21 +601,26 @@ const SideChatBot: React.FC = () => {
             {!chatEnabled ? (
                 <div className="p-4 border-t border-gray-300">
                     <div className="flex flex-col gap-2">
-                        <Button
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={isUploading}
-                            className="bg-green-700 hover:bg-green-800 w-full" // Make button full width
-                        >
-                            {isUploading ? (
-                                <>
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t.uploadingButton}
-                                </>
-                            ) : (
-                                <>
-                                    <Upload className="h-4 w-4 mr-2" /> {t.uploadButton}
-                                </>
-                            )}
-                        </Button>
+                        <div className="flex flex-row p-4 space-x-2">
+                            <Button
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isUploading}
+                                className="bg-green-700 hover:bg-green-800 w-full" // Make button full width
+                            >
+                                {isUploading ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t.uploadingButton}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="h-4 w-4 mr-2" /> {t.uploadButton}
+                                    </>
+                                )}
+                            </Button>
+                            <Button>
+                                <Mic/>
+                            </Button>
+                       </div>
                         <Input
                             ref={fileInputRef}
                             type="file"
