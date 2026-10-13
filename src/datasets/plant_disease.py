@@ -31,6 +31,19 @@ def get_image_transforms():
     return transform
 
 
+def get_eval_transforms():
+    """
+    Deterministic preprocessing for inference (no random augmentation).
+
+    Returns:
+        transforms.Compose: Resize to 224x224 and convert to tensor.
+    """
+    return transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+    ])
+
+
 class PlantDataset(Dataset):
     def __init__(self, root, transform=None):
         logging.info(f"Initializing dataset from {root}")

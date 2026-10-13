@@ -2,5 +2,8 @@ torch
 torchvision
 fastapi[all]
 uvicorn
+pillow
+google-genai
+reportlab
 tqdm
 tensorboard

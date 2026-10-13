@@ -4,3 +4,16 @@ runs
 *.pyc
 checkpoints
 
+
+# Python
+__pycache__/
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Frontend
+node_modules/
+.next/

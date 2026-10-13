@@ -1,8 +1,8 @@
 # app/utils/preprocessing.py
-from src.datasets.plant_disease import get_image_transforms
+from src.datasets.plant_disease import get_eval_transforms
 
-# Get the transformations from your dataset module
-transform = get_image_transforms()
+# Deterministic inference transform (the training transform applies random flips/crops)
+transform = get_eval_transforms()
 
 def preprocess_image(image):
     """Preprocess an image for model inference"""

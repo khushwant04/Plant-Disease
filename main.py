@@ -5,7 +5,7 @@ from PIL import Image
 import torch
 import io
 import logging
-from src.datasets.plant_disease import get_image_transforms, PlantDataset
+from src.datasets.plant_disease import get_eval_transforms, PlantDataset
 from src.Models.resnet import ResNet50
 from typing import List
 from google import genai
@@ -56,7 +56,7 @@ def load_model():
 model = load_model()
 
 # Define the image transformations
-transform = get_image_transforms()
+transform = get_eval_transforms()
 
 # Define the idx_to_class mapping from dataset
 dataset = PlantDataset(root="Plantdisease/train")

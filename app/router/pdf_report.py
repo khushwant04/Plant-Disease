@@ -190,7 +190,7 @@ async def generate_pdf_report(request: PDFReportRequest): # Use the Pydantic mod
             text = re.sub(r'\*\*(.+?)\*\*', r'\1', text) # Bold **text** -> text
             text = re.sub(r'\*(.+?)\*', r'\1', text)     # Italic *text* -> text
             text = re.sub(r'^- ', '• ', text, flags=re.M) # Bullet points - -> •
-            text = text.replace('&', '&').replace('<', '<').replace('>', '>') # Escape XML entities for ReportLab
+            text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;') # Escape XML entities for ReportLab
 
             return text
 
